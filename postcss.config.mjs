@@ -1,6 +1,7 @@
+// Minimal PostCSS config. Removed Tailwind plugin to avoid missing dependency.
 const config = {
   plugins: {
-    "@tailwindcss/postcss": {},
+    // add plugins if needed, e.g. autoprefixer: {}
   },
 };
 
