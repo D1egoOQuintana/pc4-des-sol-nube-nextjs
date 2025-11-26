@@ -8,7 +8,9 @@ RUN npm ci
 
 # Copy the rest of the source and build the Next.js app
 COPY . .
-RUN npm run build
+# Ensure TypeScript and ts-node are available so next can load next.config.ts
+RUN npm install --no-audit --no-fund --save-dev typescript ts-node && \
+	NODE_OPTIONS='-r ts-node/register' npm run build
 
 # ----------------------------
 # ► RUNNER (Producción)
