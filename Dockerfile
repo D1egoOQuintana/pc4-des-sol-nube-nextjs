@@ -8,9 +8,11 @@ RUN npm ci
 
 # Copy the rest of the source and build the Next.js app
 COPY . .
-# Ensure TypeScript and ts-node are available so next can load next.config.ts
-RUN npm install --no-audit --no-fund --save-dev typescript ts-node && \
-	NODE_OPTIONS='-r ts-node/register' npm run build
+# If a JS/ESM config exists prefer it: remove next.config.ts to avoid Next loading both
+RUN if [ -f ./next.config.mjs ]; then echo "Found next.config.mjs - removing next.config.ts to avoid duplicate load" && rm -f ./next.config.ts; fi
+
+# Build the Next.js app
+RUN npm run build
 
 # ----------------------------
 # ► RUNNER (Producción)
