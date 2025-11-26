@@ -1,25 +1,31 @@
 FROM node:20-bullseye AS builder
+
 WORKDIR /app
 
-# Install deps
+# Copy package manifests first and install all dependencies (including dev)
 COPY package.json package-lock.json* ./
-RUN apt-get update && apt-get install -y build-essential python3 make g++ && rm -rf /var/lib/apt/lists/*
-RUN npm ci --omit=dev
+RUN npm ci
 
-# Copy source and build
+# Copy the rest of the source and build the Next.js app
 COPY . .
 RUN npm run build
 
+# ----------------------------
+# ► RUNNER (Producción)
+# ----------------------------
 FROM node:20-bullseye-slim AS runner
+
 WORKDIR /app
 ENV NODE_ENV=production
 
+# Copy only runtime artifacts from builder
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/app ./app
-COPY --from=builder /app/next.config.js ./next.config.js
+
+# Copy next.config.ts to ensure Next can reference it if needed
+COPY --from=builder /app/next.config.ts ./next.config.ts
 
 EXPOSE 3000
 CMD ["npm", "start"]
