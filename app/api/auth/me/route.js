@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
+// Ensure this route is always handled dynamically (uses request.headers)
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     const cookieHeader = request.headers.get('cookie') || '';
