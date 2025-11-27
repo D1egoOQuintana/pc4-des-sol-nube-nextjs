@@ -1,3 +1,12 @@
+import ClientVerify from './ClientVerify';
+
+// This page uses client-side hooks; force dynamic rendering to avoid prerender issues
+export const dynamic = 'force-dynamic';
+
+export default function VerifyPage({ searchParams }) {
+  const email = searchParams?.email || '';
+  return <ClientVerify email={email} />;
+}
 "use client";
 // Force dynamic rendering: this page uses client-side hooks (useSearchParams)
 export const dynamic = 'force-dynamic';
